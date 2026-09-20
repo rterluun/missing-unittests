@@ -11,15 +11,11 @@ from src.missing_unittests.scan import (
 def test_get_modules_from_folder(
     mock_get_module_types: MagicMock,
     mock_convert_path: MagicMock,
-    tmp_path: Path,
+    python_package_path: Path,
+    module_name: str,
 ):
-    tmp_path.mkdir(parents=True, exist_ok=True)
-    module_name = "module1"
     mock_convert_path.return_value = module_name
-
-    tmp_path.joinpath(module_name + ".py").write_text("import os")
-
-    get_modules_from_folder(folder=tmp_path)
+    get_modules_from_folder(folder=python_package_path)
 
     mock_get_module_types.assert_called_once_with(
         module_name=module_name, is_source_folder=False
