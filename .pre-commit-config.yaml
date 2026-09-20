@@ -1,0 +1,55 @@
+repos:
+# General hooks
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    -   id: check-added-large-files
+    -   id: check-ast
+    -   id: check-docstring-first
+    -   id: check-merge-conflict
+    -   id: check-toml
+    -   id: check-yaml
+    -   id: debug-statements
+    -   id: end-of-file-fixer
+    -   id: mixed-line-ending
+    -   id: no-commit-to-branch
+        args: ['--branch', 'main']
+    -   id: trailing-whitespace
+# Markdown hooks
+-   repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.49.1
+    hooks:
+    -   id: markdownlint-fix
+# Terraform hooks
+-   repo: https://github.com/tofuutils/pre-commit-opentofu
+    rev: v2.4.2
+    hooks:
+    -   id: tofu_tflint
+        args:
+        - --args=--module
+        - --args=--enable-rule=terraform_documented_variables
+    -   id: tofu_fmt
+        args:
+        - --args=-no-color
+        - --args=-diff
+        - --args=-write=false
+    -   id: tofu_validate
+        args:
+        - --hook-config=--retry-once-with-cleanup=true
+# Python hooks
+-   repo: https://github.com/python-poetry/poetry
+    rev: 2.4.1
+    hooks:
+    -   id: poetry-check
+-   repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.12.5
+    hooks:
+    -   id: ruff-check
+        types_or: [ python, pyi ]
+        args: [ --fix ]
+    -   id: ruff-format
+        types_or: [ python, pyi ]
+-   repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.411
+    hooks:
+    - id: pyright
