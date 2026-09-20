@@ -93,6 +93,11 @@ def get_module_types(
     )  # Placeholder implementation, replace with actual logic
 
 
+def _convert_path_to_module_name(path: Path) -> str:
+    module_name = str(path).replace("/", ".").rstrip(".py").lstrip("src.")
+    return module_name
+
+
 def get_modules_from_folder(
     folder: Path,
 ) -> list[tuple[ModuleType, list[FunctionType]]]:
@@ -109,7 +114,7 @@ def get_modules_from_folder(
         ]
 
         module_names = [
-            str(Path(root) / file).replace("/", ".").rstrip(".py").lstrip("src.")
+            _convert_path_to_module_name(path=Path(root) / file)
             for file in module_files
         ]
 
