@@ -15,9 +15,9 @@ def test_get_modules_from_folder(
 ):
     tmp_path.mkdir(parents=True, exist_ok=True)
     module_name = "module1"
+    mock_convert_path.return_value = module_name
 
     tmp_path.joinpath(module_name + ".py").write_text("import os")
-    mock_convert_path.return_value = module_name
 
     get_modules_from_folder(folder=tmp_path)
 
