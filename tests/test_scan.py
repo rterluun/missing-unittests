@@ -8,7 +8,7 @@ from src.missing_unittests.scan import (
 
 @patch("src.missing_unittests.scan._convert_path_to_module_name")
 @patch("src.missing_unittests.scan.get_module_types")
-def test_get_modules_from_folder(
+def test_get_modules_from_folder_calls_get_module_types_with_params(
     mock_get_module_types: MagicMock,
     mock_convert_path: MagicMock,
     python_package_path: Path,
