@@ -146,6 +146,10 @@ def show_missing_unittests(coverage: list[tuple[str, str, bool]]):
         print(f"Module: {module_name}, Function: {function_name} - Tested: {is_tested}")
 
 
+def _remove_helper_functions(functions: list[tuple[str, str, bool]]):
+    return [function for function in functions if not function[1].startswith("_")]
+
+
 def calculate_coverage(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     not_imported_functions_in_tests: list[tuple[str, str]],
@@ -164,6 +168,8 @@ def calculate_coverage(
         ]
         if function in not_imported_functions_in_tests
     ]
+
+    not_imported_functions = _remove_helper_functions(functions=not_imported_functions)
 
     imported_functions = [
         (str(function[0]), str(function[1]), True)
