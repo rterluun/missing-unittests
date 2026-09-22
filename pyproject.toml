@@ -20,6 +20,7 @@ build-backend = "uv_build"
 dev = [
     "pre-commit>=4.6.2",
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
 ]
 
 [tool.pyright]
@@ -28,3 +29,9 @@ exclude = ["**/__pycache__", "**/.*"]
 typeCheckingMode = "standard"
 venvPath= "."
 venv = ".venv"
+
+[tool.coverage.run]
+command_line = "-m pytest -v tests/"
+omit = ["tests/*", ".venv/*"]
+relative_files = true
+source = ["src"]
