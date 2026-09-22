@@ -5,7 +5,7 @@ from pathlib import Path
 from types import FunctionType, ModuleType
 
 
-def find_not_imported_functions_in_tests(
+def _find_not_imported_functions_in_tests(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
 ) -> list[tuple[str, str]]:
@@ -141,6 +141,8 @@ def show_missing_unittests(coverage: list[tuple[str, str, bool]]):
         len([function for function in coverage if function[2]]) / len(coverage) * 100
     )
 
+    coverage.sort(key=lambda x: x[2])
+
     print(f"Coverage: {coverage_perc:.2f}%")
     for module_name, function_name, is_tested in coverage:
         print(f"Module: {module_name}, Function: {function_name} - Tested: {is_tested}")
@@ -161,25 +163,21 @@ def calculate_coverage(
         if isinstance(src_module[1], list)
     ]
 
-    not_imported_functions = [
-        (str(function[0]), str(function[1]), False)
+    coverage = [
+        (str(function[0]), str(function[1]), function[2])
         for function in [
-            (function.__module__, function.__name__) for function in total_functions
+            (
+                function.__module__,
+                function.__name__,
+                (function.__module__, function.__name__)
+                not in not_imported_functions_in_tests,
+            )
+            for function in total_functions
         ]
-        if function in not_imported_functions_in_tests
     ]
 
-    not_imported_functions = _remove_helper_functions(functions=not_imported_functions)
-
-    imported_functions = [
-        (str(function[0]), str(function[1]), True)
-        for function in [
-            (function.__module__, function.__name__) for function in total_functions
-        ]
-        if function not in not_imported_functions_in_tests
-    ]
-
-    return not_imported_functions + imported_functions
+    coverage = _remove_helper_functions(functions=coverage)
+    return coverage
 
 
 def find_src_functions_not_in_tests(
@@ -193,7 +191,7 @@ def find_src_functions_not_in_tests(
         _get_modules_from_folder(folder=tests_folder)
     )
 
-    not_imported_functions_in_tests = find_not_imported_functions_in_tests(
+    not_imported_functions_in_tests = _find_not_imported_functions_in_tests(
         src_modules=src_modules, test_modules=test_modules
     )
 
