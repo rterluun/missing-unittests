@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 from src.missing_unittests.scan import (
     _filter_functions_from_module,
+    _find_not_imported_functions_in_tests,
     _get_functions_from_module_types,
     _get_module_types,
     _get_modules_from_folder,
@@ -118,3 +119,14 @@ def test_filter_functions_from_module_returns(
         "sample_function",
         "test_function",
     ]
+
+
+def test_find_not_imported_functions_in_tests(
+    module_types_with_functions: list[tuple[ModuleType, list[FunctionType]]],
+):
+    not_imported_functions_in_tests = _find_not_imported_functions_in_tests(
+        src_modules=module_types_with_functions,
+        test_modules=module_types_with_functions,
+    )
+
+    assert not_imported_functions_in_tests == [("_pytest.raises", "raises")]
