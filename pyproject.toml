@@ -30,6 +30,10 @@ typeCheckingMode = "standard"
 venvPath= "."
 venv = ".venv"
 
+[tool.pytest.ini_options]
+addopts = "--junitxml=junit/test-results.xml --cov --cov-report term-missing --cov-report xml:coverage.xml"
+testpaths = ["tests"]
+
 [tool.coverage.run]
 command_line = "-m pytest -v tests/"
 omit = ["tests/*", ".venv/*"]
