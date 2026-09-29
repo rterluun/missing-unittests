@@ -53,3 +53,11 @@ repos:
     rev: v1.1.411
     hooks:
     - id: pyright
+-   repo: local
+    hooks:
+    - id: missing-unittests
+      name: Check for missing unit tests
+      entry: missing-unittests
+      language: python
+      args: [--src-folder ./src, --tests-folder ./tests]
+      pass_filenames: false
