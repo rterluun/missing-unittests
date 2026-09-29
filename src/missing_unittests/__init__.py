@@ -1,6 +1,7 @@
 import argparse
+import sys
 from pathlib import Path
-from sys import exit, path
+from sys import path
 
 from missing_unittests.scan import (
     PrecommitHookError,
@@ -42,4 +43,4 @@ def main() -> None:
         if not args.ignore_missing_tests:
             exitcode = 1
 
-    exit(exitcode)
+    sys.exit(exitcode)
