@@ -42,4 +42,5 @@ def main() -> None:
         if not args.ignore_missing_tests:
             exitcode = 1
 
+    print(exitcode)
     exit(exitcode)
