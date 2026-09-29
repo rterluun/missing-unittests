@@ -26,12 +26,17 @@ def main() -> None:
     args, _ = parser.parse_known_args()
     path.append(".")
 
-    try:
-        find_src_functions_not_in_tests(
-            src_folder=Path(args.src_folder),
-            tests_folder=Path(args.tests_folder),
-        )
-    except MissingUnittestsError:
-        exit(1)
+    find_src_functions_not_in_tests(
+        src_folder=Path(args.src_folder),
+        tests_folder=Path(args.tests_folder),
+    )
 
-    exit(0)
+    # try:
+    #     find_src_functions_not_in_tests(
+    #         src_folder=Path(args.src_folder),
+    #         tests_folder=Path(args.tests_folder),
+    #     )
+    # except MissingUnittestsError:
+    #     exit(1)
+
+    # exit(0)
