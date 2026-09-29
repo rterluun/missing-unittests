@@ -12,6 +12,13 @@ class MissingUnittestsError(Exception):
         super().__init__(message)
 
 
+class PrecommitHookError(Exception):
+    """Custom exception for pre-commit hook errors."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 def _find_not_imported_functions_in_tests(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
@@ -41,7 +48,9 @@ def _find_not_imported_functions_in_tests(
                     f"The following functions are missing unit tests: {missing_functions}"
                 )
         except MissingUnittestsError as e:
-            print(f"Error: {e}")
+            raise PrecommitHookError(
+                f"Pre-commit hook failed due to missing unit tests: {e}"
+            ) from e
 
 
 def _filter_functions_from_module(
