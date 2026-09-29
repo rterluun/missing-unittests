@@ -22,6 +22,12 @@ def main() -> None:
         default="./tests/",
         help="Path to the tests folder",
     )
+    parser.add_argument(
+        "--ignore-missing-tests",
+        type=bool,
+        default=False,
+        help="Ignore missing tests and exit with code 0",
+    )
 
     args, _ = parser.parse_known_args()
     path.append(".")
@@ -33,6 +39,7 @@ def main() -> None:
             tests_folder=Path(args.tests_folder),
         )
     except PrecommitHookError:
-        exitcode = 1
+        if not args.ignore_missing_tests:
+            exitcode = 1
 
     exit(exitcode)
