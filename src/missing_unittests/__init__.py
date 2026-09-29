@@ -3,7 +3,7 @@ from pathlib import Path
 from sys import exit, path
 
 from missing_unittests.scan import (
-    MissingUnittestsError,
+    PrecommitHookError,
     find_src_functions_not_in_tests,
 )
 
@@ -32,8 +32,7 @@ def main() -> None:
             src_folder=Path(args.src_folder),
             tests_folder=Path(args.tests_folder),
         )
-    except MissingUnittestsError as exc:
+    except PrecommitHookError:
         exitcode = 1
-        print(exc)
 
     exit(exitcode)
