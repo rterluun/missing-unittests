@@ -25,6 +25,7 @@ def main() -> None:
 
     args, _ = parser.parse_known_args()
     path.append(".")
+    exitcode = 0
 
     try:
         find_src_functions_not_in_tests(
@@ -32,5 +33,7 @@ def main() -> None:
             tests_folder=Path(args.tests_folder),
         )
     except MissingUnittestsError as exc:
+        exitcode = 1
         print(exc)
-        exit(1)
+
+    exit(exitcode)
