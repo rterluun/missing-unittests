@@ -31,6 +31,7 @@ def main() -> None:
             src_folder=Path(args.src_folder),
             tests_folder=Path(args.tests_folder),
         )
-    except MissingUnittestsError as e:
-        print(f"Error: {e}")
+    except MissingUnittestsError:
         exit(1)
+
+    exit(0)

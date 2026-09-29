@@ -17,10 +17,10 @@ def _find_not_imported_functions_in_tests(
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
 ) -> None:
     for src_module in src_modules:
-        try:
-            src_module_type = src_module[0]
-            found_test_functions = []
+        src_module_type = src_module[0]
+        found_test_functions = []
 
+        try:
             for test_module in test_modules:
                 found_test_functions.extend(
                     [
@@ -40,8 +40,8 @@ def _find_not_imported_functions_in_tests(
                 raise MissingUnittestsError(
                     f"The following functions are missing unit tests: {missing_functions}"
                 )
-        except TypeError:
-            continue
+        except MissingUnittestsError as e:
+            print(f"Error: {e}")
 
 
 def _filter_functions_from_module(
