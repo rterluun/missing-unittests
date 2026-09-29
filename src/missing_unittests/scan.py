@@ -47,8 +47,9 @@ def _find_not_imported_functions_in_tests(
                 raise MissingUnittestsError(
                     f"The following functions are missing unit tests: {missing_functions}"
                 )
-        except MissingUnittestsError as e:
-            raise PrecommitHookError(message=str(e)) from e
+        except MissingUnittestsError as exc:
+            print(exc)
+            raise PrecommitHookError(f"Pre-commit hook failed: {exc}") from exc
 
 
 def _filter_functions_from_module(
@@ -157,6 +158,11 @@ def find_src_functions_not_in_tests(
         _get_modules_from_folder(folder=tests_folder)
     )
 
-    _find_not_imported_functions_in_tests(
-        src_modules=src_modules, test_modules=test_modules
-    )
+    try:
+        _find_not_imported_functions_in_tests(
+            src_modules=src_modules, test_modules=test_modules
+        )
+    except PrecommitHookError as exc:
+        raise PrecommitHookError(
+            "Pre-commit hook failed due to missing unit tests."
+        ) from exc
