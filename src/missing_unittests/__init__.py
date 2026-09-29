@@ -39,9 +39,8 @@ def main() -> None:
             tests_folder=Path(args.tests_folder),
         )
     except PrecommitHookError:
-        print(args.ignore_missing_tests)
-        # if not args.ignore_missing_tests:
-        #     print("Pre-commit hook failed due to missing unit tests.")
-        #     exitcode = 1
+        if not args.ignore_missing_tests:
+            print("Pre-commit hook failed due to missing unit tests.")
+            exitcode = 1
 
     exit(exitcode)
