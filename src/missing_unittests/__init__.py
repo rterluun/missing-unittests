@@ -1,7 +1,11 @@
 import argparse
 from pathlib import Path
+from sys import exit
 
-from missing_unittests.scan import find_src_functions_not_in_tests
+from missing_unittests.scan import (
+    MissingUnittestsError,
+    find_src_functions_not_in_tests,
+)
 
 
 def main() -> None:
@@ -19,7 +23,13 @@ def main() -> None:
         help="Path to the tests folder",
     )
 
-    find_src_functions_not_in_tests(
-        src_folder=Path(parser.parse_args().src_folder),
-        tests_folder=Path(parser.parse_args().tests_folder),
-    )
+    args, _ = parser.parse_known_args()
+
+    try:
+        find_src_functions_not_in_tests(
+            src_folder=Path(args.src_folder),
+            tests_folder=Path(args.tests_folder),
+        )
+    except MissingUnittestsError as e:
+        print(f"Error: {e}")
+        exit(1)

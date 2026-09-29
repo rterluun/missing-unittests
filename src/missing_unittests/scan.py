@@ -180,6 +180,13 @@ def calculate_coverage(
     return coverage
 
 
+class MissingUnittestsError(Exception):
+    """Custom exception for missing unittests."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 def find_src_functions_not_in_tests(
     src_folder: Path,
     tests_folder: Path,
@@ -201,3 +208,8 @@ def find_src_functions_not_in_tests(
     )
 
     show_missing_unittests(coverage=coverage)
+
+    if len(not_imported_functions_in_tests) > 0:
+        raise MissingUnittestsError(
+            f"Found {len(not_imported_functions_in_tests)} functions in src that are not tested in tests."
+        )
