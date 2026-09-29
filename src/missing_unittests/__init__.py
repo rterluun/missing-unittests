@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from sys import exit
+from sys import exit, path
 
 from missing_unittests.scan import (
     MissingUnittestsError,
@@ -24,6 +24,7 @@ def main() -> None:
     )
 
     args, _ = parser.parse_known_args()
+    path.append(".")
 
     try:
         find_src_functions_not_in_tests(
