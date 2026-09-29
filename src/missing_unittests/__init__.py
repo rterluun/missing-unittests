@@ -31,6 +31,8 @@ def main() -> None:
         tests_folder=Path(args.tests_folder),
     )
 
+    exit(1)
+
     # try:
     #     find_src_functions_not_in_tests(
     #         src_folder=Path(args.src_folder),
