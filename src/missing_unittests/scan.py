@@ -97,15 +97,11 @@ def _convert_path_to_module_name(path: Path) -> str:
 
 def _get_modules_from_folder(
     folder: Path,
+    is_source_folder: bool = False,
 ) -> list[tuple[ModuleType, list[FunctionType]]]:
     modules: list[tuple[ModuleType, list[FunctionType]]] = []
 
     for root, _, files in walk(str(folder)):
-        is_source_folder: bool = False
-
-        if str(Path(root)).startswith("src"):
-            is_source_folder = True
-
         module_files = [
             file for file in files if file.endswith(".py") and file != "__init__.py"
         ]
@@ -192,7 +188,8 @@ def find_src_functions_not_in_tests(
     tests_folder: Path,
 ) -> None:
     src_modules: list[tuple[ModuleType, list[FunctionType]]] = _get_modules_from_folder(
-        folder=src_folder
+        folder=src_folder,
+        is_source_folder=True,
     )
     test_modules: list[tuple[ModuleType, list[FunctionType]]] = (
         _get_modules_from_folder(folder=tests_folder)
