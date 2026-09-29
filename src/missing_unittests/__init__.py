@@ -33,15 +33,13 @@ def main() -> None:
     path.append(".")
     exitcode = 0
 
-    print(args.ignore_missing_tests)
-
     try:
         find_src_functions_not_in_tests(
             src_folder=Path(args.src_folder),
             tests_folder=Path(args.tests_folder),
         )
     except PrecommitHookError:
-        pass
+        print(args.ignore_missing_tests)
         # if not args.ignore_missing_tests:
         #     print("Pre-commit hook failed due to missing unit tests.")
         #     exitcode = 1
