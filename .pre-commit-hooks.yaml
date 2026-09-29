@@ -2,3 +2,4 @@
     name: Check for missing unit tests
     entry: missing-unittests
     language: python
+    pass_filenames: false
