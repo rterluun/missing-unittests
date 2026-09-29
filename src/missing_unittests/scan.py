@@ -5,12 +5,17 @@ from pathlib import Path
 from types import FunctionType, ModuleType
 
 
+class MissingUnittestsError(Exception):
+    """Custom exception for missing unittests."""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+
+
 def _find_not_imported_functions_in_tests(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
-) -> list[tuple[str, str]]:
-    not_imported_functions_in_tests = []
-
+) -> None:
     for src_module in src_modules:
         try:
             src_module_type = src_module[0]
@@ -25,17 +30,18 @@ def _find_not_imported_functions_in_tests(
                     ]
                 )
 
-            not_imported_functions_in_tests.extend(
-                [
-                    (src_function.__module__, src_function.__name__)
-                    for src_function in src_module[1]
-                    if src_function.__name__ not in found_test_functions
-                ]
-            )
+            missing_functions = [
+                (src_function.__module__, src_function.__name__)
+                for src_function in src_module[1]
+                if src_function.__name__ not in found_test_functions
+            ]
+
+            if missing_functions:
+                raise MissingUnittestsError(
+                    f"The following functions are missing unit tests: {missing_functions}"
+                )
         except TypeError:
             continue
-
-    return not_imported_functions_in_tests
 
 
 def _filter_functions_from_module(
@@ -132,57 +138,6 @@ def _get_modules_from_folder(
     return modules
 
 
-def show_missing_unittests(coverage: list[tuple[str, str, bool]]):
-    coverage_perc = (
-        len([function for function in coverage if function[2]]) / len(coverage) * 100
-    )
-
-    coverage.sort(key=lambda x: x[2])
-
-    print(f"Coverage: {coverage_perc:.2f}%")
-    for module_name, function_name, is_tested in coverage:
-        print(f"Module: {module_name}, Function: {function_name} - Tested: {is_tested}")
-
-
-def _remove_helper_functions(functions: list[tuple[str, str, bool]]):
-    return [function for function in functions if not function[1].startswith("_")]
-
-
-def calculate_coverage(
-    src_modules: list[tuple[ModuleType, list[FunctionType]]],
-    not_imported_functions_in_tests: list[tuple[str, str]],
-) -> list[tuple[str, str, bool]]:
-    total_functions = []
-    _ = [
-        total_functions.extend(src_module[1])
-        for src_module in src_modules
-        if isinstance(src_module[1], list)
-    ]
-
-    coverage = [
-        (str(function[0]), str(function[1]), function[2])
-        for function in [
-            (
-                function.__module__,
-                function.__name__,
-                (function.__module__, function.__name__)
-                not in not_imported_functions_in_tests,
-            )
-            for function in total_functions
-        ]
-    ]
-
-    coverage = _remove_helper_functions(functions=coverage)
-    return coverage
-
-
-class MissingUnittestsError(Exception):
-    """Custom exception for missing unittests."""
-
-    def __init__(self, message: str):
-        super().__init__(message)
-
-
 def find_src_functions_not_in_tests(
     src_folder: Path,
     tests_folder: Path,
@@ -195,18 +150,6 @@ def find_src_functions_not_in_tests(
         _get_modules_from_folder(folder=tests_folder)
     )
 
-    not_imported_functions_in_tests = _find_not_imported_functions_in_tests(
+    _find_not_imported_functions_in_tests(
         src_modules=src_modules, test_modules=test_modules
     )
-
-    coverage = calculate_coverage(
-        src_modules=src_modules,
-        not_imported_functions_in_tests=not_imported_functions_in_tests,
-    )
-
-    show_missing_unittests(coverage=coverage)
-
-    if len(not_imported_functions_in_tests) > 0:
-        raise MissingUnittestsError(
-            f"Found {len(not_imported_functions_in_tests)} functions in src that are not tested in tests."
-        )
