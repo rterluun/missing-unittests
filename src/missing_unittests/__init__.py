@@ -40,7 +40,6 @@ def main() -> None:
         )
     except PrecommitHookError:
         if not args.ignore_missing_tests:
-            print("Pre-commit hook failed due to missing unit tests.")
             exitcode = 1
 
     exit(exitcode)
