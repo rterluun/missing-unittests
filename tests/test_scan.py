@@ -79,6 +79,27 @@ def test_get_modules_from_folder_returns(
     mock_convert_path.assert_called()
 
 
+@patch("missing_unittests.scan.print")
+@patch("missing_unittests.scan._convert_path_to_module_name")
+def test_get_modules_from_folder_raises_value_error_when_module_not_found(
+    mock_convert_path: MagicMock,
+    mock_print: MagicMock,
+    python_package_path: tuple[Path, Path, Path],
+):
+    tmp_path, _, _ = python_package_path
+    module_name = "non_existent_module"
+    mock_convert_path.return_value = module_name
+
+    _get_modules_from_folder(
+        folder=tmp_path.joinpath("tests"),
+        is_source_folder=False,
+    )
+
+    mock_print.assert_called_with(
+        f"Module '{module_name}' not found. Please check the module name."
+    )
+
+
 @patch("missing_unittests.scan._filter_functions_from_module")
 @patch("missing_unittests.scan._get_functions_from_module_types")
 def test_get_module_types_calls_get_functions_and_filter_functions(
