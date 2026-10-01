@@ -1,4 +1,5 @@
 from pathlib import Path
+from types import FunctionType, ModuleType
 from unittest.mock import MagicMock, patch
 
 from missing_unittests.scan import (
@@ -26,7 +27,11 @@ def test_get_modules_from_folder_calls_helpers_with_correct_arguments(
     tmp_path, _, file_path = python_package_path
     mock_convert_path.return_value = module_name
 
-    _get_modules_from_folder(folder=tmp_path.joinpath("tests"), is_source_folder=False)
+    _get_modules_from_folder(
+        folder=tmp_path.joinpath("tests"),
+        is_source_folder=False,
+    )
+
     mock_convert_path.assert_called_once_with(path=file_path)
 
     mock_get_module_types.assert_called_once_with(
@@ -34,17 +39,24 @@ def test_get_modules_from_folder_calls_helpers_with_correct_arguments(
     )
 
 
-# @patch("missing_unittests.scan._get_module_types")
-# def test_get_modules_from_folder_returns(
-#     mock_get_module_types: MagicMock,
-#     python_package_path: tuple[Path, Path, Path],
-#     module_type_with_functions: tuple[ModuleType, list[FunctionType]],
-# ):
-#     mock_get_module_types.return_value = module_type_with_functions
+@patch("missing_unittests.scan._convert_path_to_module_name")
+@patch("missing_unittests.scan._get_module_types")
+def test_get_modules_from_folder_returns(
+    mock_get_module_types: MagicMock,
+    mock_convert_path: MagicMock,
+    python_package_path: tuple[Path, Path, Path],
+    module_type_with_functions: tuple[ModuleType, list[FunctionType]],
+):
+    tmp_path, _, _ = python_package_path
+    mock_get_module_types.return_value = module_type_with_functions
 
-#     assert _get_modules_from_folder(folder=python_package_path) == [
-#         module_type_with_functions
-#     ]
+    returns = _get_modules_from_folder(
+        folder=tmp_path.joinpath("tests"),
+        is_source_folder=False,
+    )
+
+    assert returns == [module_type_with_functions]
+    mock_convert_path.assert_called()
 
 
 # @patch("missing_unittests.scan._filter_functions_from_module")
