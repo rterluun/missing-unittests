@@ -3,9 +3,13 @@ from pathlib import Path
 from types import FunctionType, ModuleType
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from missing_unittests.scan import (
+    PrecommitHookError,
     _convert_path_to_module_name,
     _filter_functions_from_module,
+    _find_not_imported_functions_in_tests,
     _get_functions_from_module_types,
     _get_module_types,
     _get_modules_from_folder,
@@ -154,12 +158,14 @@ def test_filter_functions_from_module_returns(
     ]
 
 
-# def test_find_not_imported_functions_in_tests(
-#     module_types_with_functions: list[tuple[ModuleType, list[FunctionType]]],
-# ):
-#     not_imported_functions_in_tests = _find_not_imported_functions_in_tests(
-#         src_modules=module_types_with_functions,
-#         test_modules=module_types_with_functions,
-#     )
-
-#     assert not_imported_functions_in_tests == [("_pytest.raises", "raises")]
+def test_find_not_imported_functions_in_tests(
+    module_types_with_functions: list[tuple[ModuleType, list[FunctionType]]],
+):
+    with pytest.raises(
+        PrecommitHookError,
+        match=r"Pre-commit hook failed: The following functions are missing unit tests",
+    ):
+        _find_not_imported_functions_in_tests(
+            src_modules=module_types_with_functions,
+            test_modules=module_types_with_functions,
+        )
