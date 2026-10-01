@@ -104,8 +104,14 @@ def _get_module_types(
     return module_type_with_functions
 
 
-def _convert_path_to_module_name(path: Path) -> str:
-    module_name = str(path).replace("/", ".").rstrip(".py").lstrip("src.")
+def _convert_path_to_module_name(
+    path: Path,
+    is_source_folder: bool = False,
+) -> str:
+    if is_source_folder:
+        path = path.relative_to(path.parents[1])
+
+    module_name = str(path).replace("/", ".").rstrip(".py")
     return module_name
 
 

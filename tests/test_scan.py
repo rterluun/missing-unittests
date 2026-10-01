@@ -8,12 +8,23 @@ from missing_unittests.scan import (
 )
 
 
-def test_convert_path_to_module_name(
+def test_convert_path_to_module_name_not_source_folder(
     python_package_path: tuple[Path, Path, Path],
     module_name: str,
 ):
     _, _, file_path = python_package_path
-    assert _convert_path_to_module_name(path=file_path) == module_name
+    assert (
+        _convert_path_to_module_name(path=file_path, is_source_folder=False)
+        == module_name
+    )
+
+
+def test_convert_path_to_module_name_source_folder():
+    file_path = "src/missing_unittests/scan.py"
+    assert (
+        _convert_path_to_module_name(path=Path(file_path), is_source_folder=True)
+        == "missing_unittests.scan"
+    )
 
 
 @patch("missing_unittests.scan._convert_path_to_module_name")
