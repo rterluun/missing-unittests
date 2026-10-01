@@ -201,7 +201,7 @@ def test_find_not_imported_functions_in_tests(
 ):
     with pytest.raises(
         PrecommitHookError,
-        match=r"Pre-commit hook failed: The following functions are missing unit tests",
+        match=r"Pre-commit hook failed: Missing unit tests for functions:",
     ):
         _find_not_imported_functions_in_tests(
             src_modules=module_types_with_functions,

@@ -23,6 +23,8 @@ def _find_not_imported_functions_in_tests(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
 ) -> None:
+    all_missing_functions: list[tuple[str, str]] = []
+
     for src_module in src_modules:
         src_module_type = src_module[0]
         found_test_functions = []
@@ -44,12 +46,18 @@ def _find_not_imported_functions_in_tests(
             ]
 
             if missing_functions:
+                all_missing_functions.extend(missing_functions)
                 raise MissingUnittestsError(
                     f"The following functions are missing unit tests: {missing_functions}"
                 )
         except MissingUnittestsError as exc:
             print(exc)
-            raise PrecommitHookError(f"Pre-commit hook failed: {exc}") from exc
+            continue
+
+    if all_missing_functions:
+        raise PrecommitHookError(
+            f"Pre-commit hook failed: Missing unit tests for functions: {all_missing_functions}"
+        ) from None
 
 
 def _filter_functions_from_module(
