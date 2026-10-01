@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from missing_unittests.scan import (
     _convert_path_to_module_name,
+    _filter_functions_from_module,
     _get_module_types,
     _get_modules_from_folder,
 )
@@ -130,25 +131,25 @@ def test_get_module_types_returns(
 #     )
 
 
-# @patch("missing_unittests.scan.getmembers")
-# def test_filter_functions_from_module_returns(
-#     mock_getmembers: MagicMock,
-#     module_type_with_functions: tuple[ModuleType, list[FunctionType]],
-#     members: list[tuple[str, FunctionType]],
-#     module_name: str,
-# ):
-#     mock_getmembers.return_value = members
+@patch("missing_unittests.scan.getmembers")
+def test_filter_functions_from_module_returns(
+    mock_getmembers: MagicMock,
+    module_type_with_functions: tuple[ModuleType, list[FunctionType]],
+    members: list[tuple[str, FunctionType]],
+    module_name: str,
+):
+    mock_getmembers.return_value = members
 
-#     functions = _filter_functions_from_module(
-#         module_type_with_functions=module_type_with_functions
-#     )
+    functions = _filter_functions_from_module(
+        module_type_with_functions=module_type_with_functions
+    )
 
-#     assert [
-#         member.__name__ for member in functions[1] if member.__module__ == module_name
-#     ] == [
-#         "sample_function",
-#         "test_function",
-#     ]
+    assert [
+        member.__name__ for member in functions[1] if member.__module__ == module_name
+    ] == [
+        "sample_function",
+        "test_function",
+    ]
 
 
 # def test_find_not_imported_functions_in_tests(
