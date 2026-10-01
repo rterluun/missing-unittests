@@ -25,7 +25,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--fail-on-missing-tests",
-        type=bool,
+        action=argparse.BooleanOptionalAction,
         default=True,
         help="Fail the pre-commit hook if missing tests are found",
     )
