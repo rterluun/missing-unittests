@@ -43,7 +43,7 @@ def test_get_modules_from_folder_calls_helpers_with_correct_arguments(
         is_source_folder=False,
     )
 
-    mock_convert_path.assert_called_once_with(path=file_path)
+    mock_convert_path.assert_called_once_with(path=file_path, is_source_folder=False)
 
     mock_get_module_types.assert_called_once_with(
         module_name=module_name, is_source_folder=False

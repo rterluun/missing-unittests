@@ -128,7 +128,8 @@ def _get_modules_from_folder(
 
         module_names = [
             _convert_path_to_module_name(
-                path=Path(root).relative_to(folder.parent) / file
+                path=Path(root).relative_to(folder.parent) / file,
+                is_source_folder=is_source_folder,
             )
             for file in module_files
         ]
