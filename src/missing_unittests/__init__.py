@@ -40,7 +40,7 @@ def main() -> None:
             tests_folder=Path(args.tests_folder),
         )
     except PrecommitHookError:
-        if args.fail_on_missing_tests:
+        if args.fail_on_missing_tests is True:
             exitcode = 1
 
     sys.exit(exitcode)

@@ -1,4 +1,5 @@
 import inspect
+from argparse import Namespace
 from importlib import import_module
 from pathlib import Path
 from types import FunctionType, ModuleType
@@ -22,6 +23,16 @@ def get_module_type_with_functions() -> tuple[ModuleType, list[FunctionType]]:
     return (
         module_type,
         [member[1] for member in get_members(module_type)],
+    )
+
+
+def create_argparse_namespace(
+    fail_on_missing_tests: bool = True,
+) -> Namespace:
+    return Namespace(
+        src_folder="./src/",
+        tests_folder="./tests/",
+        fail_on_missing_tests=fail_on_missing_tests,
     )
 
 
@@ -67,3 +78,8 @@ def module_type_with_functions() -> tuple[ModuleType, list[FunctionType]]:
 @pytest.fixture
 def module_types_with_functions() -> list[tuple[ModuleType, list[FunctionType]]]:
     return [get_module_type_with_functions()]
+
+
+@pytest.fixture
+def argparse_namespace() -> Namespace:
+    return create_argparse_namespace(fail_on_missing_tests=True)
