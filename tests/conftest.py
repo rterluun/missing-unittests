@@ -26,16 +26,6 @@ def get_module_type_with_functions() -> tuple[ModuleType, list[FunctionType]]:
     )
 
 
-def create_argparse_namespace(
-    fail_on_missing_tests: bool = True,
-) -> Namespace:
-    return Namespace(
-        src_folder="./src/",
-        tests_folder="./tests/",
-        fail_on_missing_tests=fail_on_missing_tests,
-    )
-
-
 def get_python_package_folder_structure() -> tuple[list[LiteralString], str]:
     module_name_split = MODULE_NAME.split(".")
     sub_dirs = module_name_split[:-1]
@@ -82,4 +72,8 @@ def module_types_with_functions() -> list[tuple[ModuleType, list[FunctionType]]]
 
 @pytest.fixture
 def argparse_namespace() -> Namespace:
-    return create_argparse_namespace(fail_on_missing_tests=True)
+    return Namespace(
+        src_folder="./src/",
+        tests_folder="./tests/",
+        fail_on_missing_tests=True,
+    )
