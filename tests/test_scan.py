@@ -236,3 +236,26 @@ def test_find_src_functions_not_in_tests(
         src_modules=mock_get_modules_from_folder.return_value,
         test_modules=mock_get_modules_from_folder.return_value,
     )
+
+
+@patch("missing_unittests.scan._find_not_imported_functions_in_tests")
+@patch("missing_unittests.scan._get_modules_from_folder")
+def test_find_src_functions_raises_precommit_hook_error_when_missing_unittests(
+    mock_get_modules_from_folder: MagicMock,
+    mock_find_not_imported_functions_in_tests: MagicMock,
+):
+    src_folder = Path("src")
+    tests_folder = Path("tests")
+
+    mock_find_not_imported_functions_in_tests.side_effect = PrecommitHookError(
+        "some error"
+    )
+
+    with pytest.raises(
+        PrecommitHookError, match="Pre-commit hook failed due to missing unit tests."
+    ):
+        find_src_functions_not_in_tests(
+            src_folder=src_folder,
+            tests_folder=tests_folder,
+        )
+        mock_get_modules_from_folder.assert_called()
