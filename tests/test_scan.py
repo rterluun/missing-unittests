@@ -13,6 +13,7 @@ from missing_unittests.scan import (
     _get_functions_from_module_types,
     _get_module_types,
     _get_modules_from_folder,
+    find_src_functions_not_in_tests,
 )
 
 
@@ -98,6 +99,22 @@ def test_get_module_types_calls_get_functions_and_filter_functions(
 
 @patch("missing_unittests.scan._filter_functions_from_module")
 @patch("missing_unittests.scan._get_functions_from_module_types")
+def test_get_module_types_raises_value_error_when_module_not_found(
+    mock_get_functions_from_module_types: MagicMock,
+    mock_filter_functions_from_module: MagicMock,
+):
+    module_name = "non_existent_module"
+    with pytest.raises(
+        ValueError,
+        match=f"Module '{module_name}' not found. Please check the module name.",
+    ):
+        _get_module_types(module_name=module_name, is_source_folder=True)
+        mock_get_functions_from_module_types.assert_called()
+        mock_filter_functions_from_module.assert_not_called()
+
+
+@patch("missing_unittests.scan._filter_functions_from_module")
+@patch("missing_unittests.scan._get_functions_from_module_types")
 def test_get_module_types_returns(
     mock_get_functions_from_module_types: MagicMock,
     mock_filter_functions_from_module: MagicMock,
@@ -169,3 +186,32 @@ def test_find_not_imported_functions_in_tests(
             src_modules=module_types_with_functions,
             test_modules=module_types_with_functions,
         )
+
+
+@patch("missing_unittests.scan._find_not_imported_functions_in_tests")
+@patch("missing_unittests.scan._get_modules_from_folder")
+def test_find_src_functions_not_in_tests(
+    mock_get_modules_from_folder: MagicMock,
+    mock_find_not_imported_functions_in_tests: MagicMock,
+):
+    src_folder = Path("src")
+    tests_folder = Path("tests")
+
+    find_src_functions_not_in_tests(
+        src_folder=src_folder,
+        tests_folder=tests_folder,
+    )
+
+    assert mock_get_modules_from_folder.call_count == 2
+    mock_get_modules_from_folder.assert_any_call(
+        folder=src_folder,
+        is_source_folder=True,
+    )
+    mock_get_modules_from_folder.assert_any_call(
+        folder=tests_folder,
+    )
+
+    mock_find_not_imported_functions_in_tests.assert_called_once_with(
+        src_modules=mock_get_modules_from_folder.return_value,
+        test_modules=mock_get_modules_from_folder.return_value,
+    )
