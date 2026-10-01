@@ -108,9 +108,8 @@ def _convert_path_to_module_name(
     path: Path,
     is_source_folder: bool = False,
 ) -> str:
-    print(path)
     if is_source_folder:
-        path = path.relative_to(path.parents[1])
+        path = path.relative_to(path.parts[0])
 
     module_name = str(path).replace("/", ".").rstrip(".py")
     return module_name
