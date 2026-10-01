@@ -145,7 +145,7 @@ def _get_modules_from_folder(
                 for module_name in module_names
             ]
         except ValueError as exc:
-            print(exc)
+            print(exc.args[0])
             continue
 
         modules.extend(module_types)
