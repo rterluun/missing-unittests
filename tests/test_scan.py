@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 from missing_unittests.scan import (
     _convert_path_to_module_name,
+    _get_module_types,
     _get_modules_from_folder,
 )
 
@@ -70,40 +71,40 @@ def test_get_modules_from_folder_returns(
     mock_convert_path.assert_called()
 
 
-# @patch("missing_unittests.scan._filter_functions_from_module")
-# @patch("missing_unittests.scan._get_functions_from_module_types")
-# def test_get_module_types_calls_get_functions_and_filter_functions(
-#     mock_get_functions_from_module_types: MagicMock,
-#     mock_filter_functions_from_module: MagicMock,
-#     module_name: str,
-#     module_type: ModuleType,
-# ):
-#     _get_module_types(module_name=module_name, is_source_folder=True)
-#     mock_get_functions_from_module_types.assert_called_once_with(
-#         module_type=module_type
-#     )
+@patch("missing_unittests.scan._filter_functions_from_module")
+@patch("missing_unittests.scan._get_functions_from_module_types")
+def test_get_module_types_calls_get_functions_and_filter_functions(
+    mock_get_functions_from_module_types: MagicMock,
+    mock_filter_functions_from_module: MagicMock,
+    module_name: str,
+    module_type: ModuleType,
+):
+    _get_module_types(module_name=module_name, is_source_folder=True)
+    mock_get_functions_from_module_types.assert_called_once_with(
+        module_type=module_type
+    )
 
-#     mock_filter_functions_from_module.assert_called_once_with(
-#         module_type_with_functions=mock_get_functions_from_module_types.return_value
-#     )
+    mock_filter_functions_from_module.assert_called_once_with(
+        module_type_with_functions=mock_get_functions_from_module_types.return_value
+    )
 
 
-# @patch("missing_unittests.scan._filter_functions_from_module")
-# @patch("missing_unittests.scan._get_functions_from_module_types")
-# def test_get_module_types_returns(
-#     mock_get_functions_from_module_types: MagicMock,
-#     mock_filter_functions_from_module: MagicMock,
-#     module_name: str,
-#     module_type_with_functions: tuple[ModuleType, list[FunctionType]],
-# ):
-#     mock_get_functions_from_module_types.return_value = module_type_with_functions
+@patch("missing_unittests.scan._filter_functions_from_module")
+@patch("missing_unittests.scan._get_functions_from_module_types")
+def test_get_module_types_returns(
+    mock_get_functions_from_module_types: MagicMock,
+    mock_filter_functions_from_module: MagicMock,
+    module_name: str,
+    module_type_with_functions: tuple[ModuleType, list[FunctionType]],
+):
+    mock_get_functions_from_module_types.return_value = module_type_with_functions
 
-#     assert (
-#         _get_module_types(module_name=module_name, is_source_folder=False)
-#         == module_type_with_functions
-#     )
+    assert (
+        _get_module_types(module_name=module_name, is_source_folder=False)
+        == module_type_with_functions
+    )
 
-#     mock_filter_functions_from_module.assert_not_called()
+    mock_filter_functions_from_module.assert_not_called()
 
 
 # @patch("missing_unittests.scan.getmembers")
