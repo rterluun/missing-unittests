@@ -1,0 +1,41 @@
+[project]
+name = "missing-unittests"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Robert ter Luun", email = "rterluun@ilionx.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+missing-unittests = "missing_unittests:main"
+
+[build-system]
+requires = ["uv_build>=0.12.8,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.2",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+]
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/__pycache__", "**/.*"]
+typeCheckingMode = "standard"
+venvPath= "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+addopts = "--junitxml=junit/test-results.xml --cov --cov-report term-missing --cov-report xml:coverage.xml"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+command_line = "-m pytest -v tests/"
+omit = ["tests/*", ".venv/*"]
+relative_files = true
+source = ["src"]

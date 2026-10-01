@@ -1,0 +1,46 @@
+import argparse
+import sys
+from pathlib import Path
+from sys import path
+
+from missing_unittests.scan import (
+    PrecommitHookError,
+    find_src_functions_not_in_tests,
+)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--src-folder",
+        type=str,
+        default="./src/",
+        help="Path to the source folder",
+    )
+    parser.add_argument(
+        "--tests-folder",
+        type=str,
+        default="./tests/",
+        help="Path to the tests folder",
+    )
+    parser.add_argument(
+        "--fail-on-missing-tests",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Fail the pre-commit hook if missing tests are found",
+    )
+
+    args, _ = parser.parse_known_args()
+    path.append(".")
+    exitcode = 0
+
+    try:
+        find_src_functions_not_in_tests(
+            src_folder=Path(args.src_folder),
+            tests_folder=Path(args.tests_folder),
+        )
+    except PrecommitHookError:
+        if args.fail_on_missing_tests is True:
+            exitcode = 1
+
+    sys.exit(exitcode)
