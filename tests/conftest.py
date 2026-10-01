@@ -2,6 +2,7 @@ import inspect
 from importlib import import_module
 from pathlib import Path
 from types import FunctionType, ModuleType
+from typing import LiteralString
 
 import pytest
 
@@ -24,11 +25,23 @@ def get_module_type_with_functions() -> tuple[ModuleType, list[FunctionType]]:
     )
 
 
+def get_python_package_folder_structure() -> tuple[list[LiteralString], str]:
+    module_name_split = MODULE_NAME.split(".")
+    sub_dirs = module_name_split[:-1]
+    file_name = module_name_split[-1] + ".py"
+    return (sub_dirs, file_name)
+
+
 @pytest.fixture
-def python_package_path(tmp_path: Path) -> Path:
-    tmp_path.mkdir(parents=True, exist_ok=True)
-    tmp_path.joinpath(MODULE_NAME + ".py").write_text("import os")
-    return tmp_path
+def python_package_path(tmp_path: Path) -> tuple[Path, Path, Path]:
+    sub_dirs, file_name = get_python_package_folder_structure()
+    sub_dir_path = tmp_path.joinpath(*sub_dirs)
+    file_path = tmp_path.joinpath(*sub_dirs, file_name)
+    sub_dir_path.mkdir(parents=True, exist_ok=True)
+    file_path.write_text("import os")
+    file_path_relative = file_path.relative_to(tmp_path)
+
+    return (tmp_path, sub_dir_path, file_path_relative)
 
 
 @pytest.fixture
