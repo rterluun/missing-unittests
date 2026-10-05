@@ -55,7 +55,7 @@ To set it up add the following to your `.pre-commit-config.yaml` file:
 
 ## Configuration file
 
-The utility can be configured using a YAML configuration file. 
+The utility can be configured using a YAML configuration file.
 The default name for the configuration file is `.missing_unittests.yaml`, but you can specify a different name using the `--config-file` argument.
 
 | Key | Description |

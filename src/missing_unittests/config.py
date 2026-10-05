@@ -17,7 +17,9 @@ def load_config_from_yaml(config_yaml: Path) -> MissingUnittestsYamlConfig:
 
     try:
         if not config_yaml.exists():
-            raise FileNotFoundError(f"Config file not found: {config_yaml}")
+            raise FileNotFoundError(
+                f"Config file not found: {config_yaml}. Using default configuration."
+            )
 
         file_content: dict | None = None
 
