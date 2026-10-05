@@ -169,7 +169,6 @@ def find_src_functions_not_in_tests(
         folder=src_folder,
         is_source_folder=True,
     )
-    print(src_modules)
     test_modules: list[tuple[ModuleType, list[FunctionType]]] = (
         _get_modules_from_folder(folder=tests_folder)
     )
