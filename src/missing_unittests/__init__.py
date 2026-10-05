@@ -1,5 +1,6 @@
 import argparse
 import sys
+from os import environ
 from pathlib import Path
 from sys import path
 
@@ -7,6 +8,11 @@ from missing_unittests.scan import (
     PrecommitHookError,
     find_src_functions_not_in_tests,
 )
+
+
+def fail_on_missing_tests() -> bool:
+    fail_on_missing_tests_env = environ.get("FAIL_ON_MISSING_TESTS", "False")
+    return fail_on_missing_tests_env.lower() in ("true", "1", "t", "y", "yes")
 
 
 def main() -> None:
@@ -40,7 +46,7 @@ def main() -> None:
             tests_folder=Path(args.tests_folder),
         )
     except PrecommitHookError:
-        if args.fail_on_missing_tests is True:
+        if args.fail_on_missing_tests is True or fail_on_missing_tests():
             exitcode = 1
 
     sys.exit(exitcode)
