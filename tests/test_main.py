@@ -2,6 +2,8 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+from pytest import mark
+
 from missing_unittests.__init__ import fail_on_missing_tests, main
 from missing_unittests.scan import PrecommitHookError
 
@@ -61,9 +63,11 @@ def test_main_calls_sys_exit_0_when_fail_on_missing_tests_is_false_and_exception
     mock_sys_exit.assert_called_once_with(0)
 
 
+@mark.parametrize("env_value", ["true", "1", "t", "y", "yes"])
 @patch("missing_unittests.__init__.environ")
 def test_fail_on_missing_tests_when_env_var_is_set_to_true(
     mock_environ: MagicMock,
+    env_value: str,
 ) -> None:
-    mock_environ.get.return_value = "true"
+    mock_environ.get.return_value = env_value
     assert fail_on_missing_tests() is True
