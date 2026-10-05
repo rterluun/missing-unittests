@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class MissingUnittestsYamlConfig(BaseModel):
-    exclusions: list[dict[str, str]] = []
+    exclusions: list = []
 
 
 class MissingUnittestsConfig(BaseModel):
@@ -42,9 +42,10 @@ def load_config_from_yaml(config_yaml: Path) -> MissingUnittestsYamlConfig:
 def get_exclusions_from_yaml_config(
     config: MissingUnittestsYamlConfig,
 ) -> list[tuple[str, str]]:
-    exclusions: list[tuple[str | None, str | None]] = [
-        (exclusion.get("module"), exclusion.get("function"))
+    exclusions: list = [
+        (exclusion.get("module"), function)
         for exclusion in config.exclusions
+        for function in exclusion.get("functions", [])
     ]
 
     exclusions_str: list[tuple[str, str]] = [

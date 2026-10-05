@@ -86,6 +86,7 @@ def get_exclusions_list() -> list[tuple[str, str]]:
     return [
         ("missing_unittests.__init__", "a"),
         ("missing_unittests.__init__", "b"),
+        ("missing_unittests.__main__", "a"),
     ]
 
 
@@ -96,12 +97,10 @@ def config_yaml() -> Path:
 
 @pytest.fixture
 def missing_unittests_yaml_config() -> MissingUnittestsYamlConfig:
-    exclusions_list = get_exclusions_list()
-
     return MissingUnittestsYamlConfig(
         exclusions=[
-            {"module": module, "function": function}
-            for module, function in exclusions_list
+            {"module": "missing_unittests.__init__", "functions": ["a", "b"]},
+            {"module": "missing_unittests.__main__", "functions": ["a"]},
         ]
     )
 

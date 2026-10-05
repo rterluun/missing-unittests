@@ -1,5 +1,8 @@
 exclusions:
   - module: missing_unittests.__init__
-    function: a
-  - module: missing_unittests.__init__
-    function: b
+    functions:
+      - a
+      - b
+  - module: missing_unittests.__main__
+    functions:
+      - a
