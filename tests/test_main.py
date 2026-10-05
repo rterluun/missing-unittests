@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 from pytest import mark
 
 from missing_unittests.__init__ import fail_on_missing_tests, main
+from missing_unittests.config import MissingUnittestsConfig
 from missing_unittests.scan import PrecommitHookError
 
 
@@ -16,6 +17,7 @@ def test_main_calls_functions_with_correct_arguments(
     mock_find_src_functions_not_in_tests: MagicMock,
     mock_sys_exit: MagicMock,
     argparse_namespace: Namespace,
+    missing_unittests_config: MissingUnittestsConfig,
 ) -> None:
     mock_parse_known_args.return_value = (argparse_namespace, [])
     main()
@@ -23,6 +25,7 @@ def test_main_calls_functions_with_correct_arguments(
     mock_find_src_functions_not_in_tests.assert_called_once_with(
         src_folder=Path(argparse_namespace.src_folder),
         tests_folder=Path(argparse_namespace.tests_folder),
+        config=missing_unittests_config,
     )
 
     mock_sys_exit.assert_called_once_with(0)

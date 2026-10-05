@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from missing_unittests.config import MissingUnittestsConfig
 from missing_unittests.scan import (
     PrecommitHookError,
     _convert_path_to_module_name,
@@ -198,6 +199,7 @@ def test_filter_functions_from_module_returns(
 
 def test_find_not_imported_functions_in_tests(
     module_types_with_functions: list[tuple[ModuleType, list[FunctionType]]],
+    exclusions_list: list[tuple[str, str]],
 ):
     with pytest.raises(
         PrecommitHookError,
@@ -206,6 +208,7 @@ def test_find_not_imported_functions_in_tests(
         _find_not_imported_functions_in_tests(
             src_modules=module_types_with_functions,
             test_modules=module_types_with_functions,
+            exclusions=exclusions_list,
         )
 
 
@@ -214,6 +217,7 @@ def test_find_not_imported_functions_in_tests(
 def test_find_src_functions_not_in_tests(
     mock_get_modules_from_folder: MagicMock,
     mock_find_not_imported_functions_in_tests: MagicMock,
+    missing_unittests_config: MissingUnittestsConfig,
 ):
     src_folder = Path("src")
     tests_folder = Path("tests")
@@ -221,6 +225,7 @@ def test_find_src_functions_not_in_tests(
     find_src_functions_not_in_tests(
         src_folder=src_folder,
         tests_folder=tests_folder,
+        config=missing_unittests_config,
     )
 
     assert mock_get_modules_from_folder.call_count == 2
@@ -235,6 +240,7 @@ def test_find_src_functions_not_in_tests(
     mock_find_not_imported_functions_in_tests.assert_called_once_with(
         src_modules=mock_get_modules_from_folder.return_value,
         test_modules=mock_get_modules_from_folder.return_value,
+        exclusions=missing_unittests_config.exclusions,
     )
 
 
@@ -243,6 +249,7 @@ def test_find_src_functions_not_in_tests(
 def test_find_src_functions_raises_precommit_hook_error_when_missing_unittests(
     mock_get_modules_from_folder: MagicMock,
     mock_find_not_imported_functions_in_tests: MagicMock,
+    missing_unittests_config: MissingUnittestsConfig,
 ):
     src_folder = Path("src")
     tests_folder = Path("tests")
@@ -257,5 +264,6 @@ def test_find_src_functions_raises_precommit_hook_error_when_missing_unittests(
         find_src_functions_not_in_tests(
             src_folder=src_folder,
             tests_folder=tests_folder,
+            config=missing_unittests_config,
         )
         mock_get_modules_from_folder.assert_called()

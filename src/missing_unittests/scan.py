@@ -4,6 +4,8 @@ from os import walk
 from pathlib import Path
 from types import FunctionType, ModuleType
 
+from missing_unittests.config import MissingUnittestsConfig
+
 
 class MissingUnittestsError(Exception):
     """Custom exception for missing unittests."""
@@ -22,6 +24,7 @@ class PrecommitHookError(Exception):
 def _find_not_imported_functions_in_tests(
     src_modules: list[tuple[ModuleType, list[FunctionType]]],
     test_modules: list[tuple[ModuleType, list[FunctionType]]],
+    exclusions: list[tuple[str, str]],
 ) -> None:
     all_missing_functions: list[tuple[str, str]] = []
 
@@ -45,7 +48,11 @@ def _find_not_imported_functions_in_tests(
                 if src_function.__name__ not in found_test_functions
             ]
 
-            if missing_functions:
+            non_excluded_missing_functions = [
+                func for func in missing_functions if func not in exclusions
+            ]
+
+            if non_excluded_missing_functions:
                 all_missing_functions.extend(missing_functions)
                 raise MissingUnittestsError(
                     f"The following functions are missing unit tests: {missing_functions}"
@@ -164,6 +171,7 @@ def _get_modules_from_folder(
 def find_src_functions_not_in_tests(
     src_folder: Path,
     tests_folder: Path,
+    config: MissingUnittestsConfig,
 ) -> None:
     src_modules: list[tuple[ModuleType, list[FunctionType]]] = _get_modules_from_folder(
         folder=src_folder,
@@ -175,7 +183,9 @@ def find_src_functions_not_in_tests(
 
     try:
         _find_not_imported_functions_in_tests(
-            src_modules=src_modules, test_modules=test_modules
+            src_modules=src_modules,
+            test_modules=test_modules,
+            exclusions=config.exclusions,
         )
     except PrecommitHookError as exc:
         raise PrecommitHookError(

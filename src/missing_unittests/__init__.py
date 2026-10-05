@@ -4,6 +4,7 @@ from os import environ
 from pathlib import Path
 from sys import path
 
+from missing_unittests.config import MissingUnittestsConfig, load_config
 from missing_unittests.scan import (
     PrecommitHookError,
     find_src_functions_not_in_tests,
@@ -35,15 +36,23 @@ def main() -> None:
         default=True,
         help="Fail the pre-commit hook if missing tests are found",
     )
+    parser.add_argument(
+        "--config-file",
+        type=str,
+        default="./.missing_unittests.yaml",
+        help="Path to the config file",
+    )
 
     args, _ = parser.parse_known_args()
     path.append(".")
     exitcode = 0
 
     try:
+        config: MissingUnittestsConfig = load_config(config_yaml=Path(args.config_file))
         find_src_functions_not_in_tests(
             src_folder=Path(args.src_folder),
             tests_folder=Path(args.tests_folder),
+            config=config,
         )
     except PrecommitHookError:
         if args.fail_on_missing_tests is True or fail_on_missing_tests():
