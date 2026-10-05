@@ -40,10 +40,18 @@ def load_config_from_yaml(config_yaml: Path) -> MissingUnittestsYamlConfig:
 def get_exclusions_from_yaml_config(
     config: MissingUnittestsYamlConfig,
 ) -> list[tuple[str, str]]:
-    exclusions = [
-        (exclusion["module"], exclusion["function"]) for exclusion in config.exclusions
+    exclusions: list[tuple[str | None, str | None]] = [
+        (exclusion.get("module"), exclusion.get("function"))
+        for exclusion in config.exclusions
     ]
-    return exclusions
+
+    exclusions_str: list[tuple[str, str]] = [
+        (module, function)
+        for module, function in exclusions
+        if isinstance(module, str) and isinstance(function, str)
+    ]
+
+    return exclusions_str
 
 
 def load_config(config_yaml: Path):

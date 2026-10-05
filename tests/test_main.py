@@ -9,6 +9,7 @@ from missing_unittests.config import MissingUnittestsConfig
 from missing_unittests.scan import PrecommitHookError
 
 
+@patch("missing_unittests.__init__.load_config")
 @patch("missing_unittests.__init__.sys.exit")
 @patch("missing_unittests.__init__.find_src_functions_not_in_tests")
 @patch("missing_unittests.__init__.argparse.ArgumentParser.parse_known_args")
@@ -16,10 +17,12 @@ def test_main_calls_functions_with_correct_arguments(
     mock_parse_known_args: MagicMock,
     mock_find_src_functions_not_in_tests: MagicMock,
     mock_sys_exit: MagicMock,
+    mock_load_config: MagicMock,
     argparse_namespace: Namespace,
     missing_unittests_config: MissingUnittestsConfig,
 ) -> None:
     mock_parse_known_args.return_value = (argparse_namespace, [])
+    mock_load_config.return_value = missing_unittests_config
     main()
 
     mock_find_src_functions_not_in_tests.assert_called_once_with(
@@ -29,6 +32,9 @@ def test_main_calls_functions_with_correct_arguments(
     )
 
     mock_sys_exit.assert_called_once_with(0)
+    mock_load_config.assert_called_once_with(
+        config_yaml=Path(argparse_namespace.config_file)
+    )
 
 
 @patch("missing_unittests.__init__.sys.exit")
