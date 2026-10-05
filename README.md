@@ -34,6 +34,7 @@ Where the arguments are:
 | `--tests-folder` | The path to the folder containing your unit tests. |
 | `--fail-on-missing-tests` | If this flag is set, the utility will exit with a non-zero status code if any functions are found to be missing unit tests. If this flag is not set, the utility will exit with a zero status code even if there are missing tests. |
 | `--no-fail-on-missing-tests` | If this flag is set, the utility will exit with a zero status code even if there are missing tests. |
+| `--config-file` | The path to a configuration file. If this argument is not provided, the utility will look for a configuration file named `.missing_unittests.yaml` in the current working directory. |
 
 ## Use it as a pre-commit hook
 
@@ -51,4 +52,24 @@ To set it up add the following to your `.pre-commit-config.yaml` file:
       args:
         - --fail-on-missing-tests
 ```
+
+## Configuration file
+
+The utility can be configured using a YAML configuration file. 
+The default name for the configuration file is `.missing_unittests.yaml`, but you can specify a different name using the `--config-file` argument.
+
+| Key | Description |
+| --- | ----------- |
+| `exclusions` | A list of key value pairs where module is the module name and function is the function name to exclude from the check. |
+
+### exclusions
+
+```yaml
+exclusions:
+  - module: missing_unittests.__init__
+    function: a
+  - module: missing_unittests.__init__
+    function: b
+```
+
 <!-- markdownlint-restore MD013-->
