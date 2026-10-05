@@ -2,13 +2,13 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from missing_unittests import main
+from missing_unittests.__init__ import fail_on_missing_tests, main
 from missing_unittests.scan import PrecommitHookError
 
 
-@patch("missing_unittests.sys.exit")
-@patch("missing_unittests.find_src_functions_not_in_tests")
-@patch("missing_unittests.argparse.ArgumentParser.parse_known_args")
+@patch("missing_unittests.__init__.sys.exit")
+@patch("missing_unittests.__init__.find_src_functions_not_in_tests")
+@patch("missing_unittests.__init__.argparse.ArgumentParser.parse_known_args")
 def test_main_calls_functions_with_correct_arguments(
     mock_parse_known_args: MagicMock,
     mock_find_src_functions_not_in_tests: MagicMock,
@@ -26,9 +26,9 @@ def test_main_calls_functions_with_correct_arguments(
     mock_sys_exit.assert_called_once_with(0)
 
 
-@patch("missing_unittests.sys.exit")
-@patch("missing_unittests.find_src_functions_not_in_tests")
-@patch("missing_unittests.argparse.ArgumentParser.parse_known_args")
+@patch("missing_unittests.__init__.sys.exit")
+@patch("missing_unittests.__init__.find_src_functions_not_in_tests")
+@patch("missing_unittests.__init__.argparse.ArgumentParser.parse_known_args")
 def test_main_calls_sys_exit_1_when_fail_on_missing_tests_is_true_and_exception_raised(
     mock_parse_known_args: MagicMock,
     mock_find_src_functions_not_in_tests: MagicMock,
@@ -43,9 +43,9 @@ def test_main_calls_sys_exit_1_when_fail_on_missing_tests_is_true_and_exception_
     mock_sys_exit.assert_called_once_with(1)
 
 
-@patch("missing_unittests.sys.exit")
-@patch("missing_unittests.find_src_functions_not_in_tests")
-@patch("missing_unittests.argparse.ArgumentParser.parse_known_args")
+@patch("missing_unittests.__init__.sys.exit")
+@patch("missing_unittests.__init__.find_src_functions_not_in_tests")
+@patch("missing_unittests.__init__.argparse.ArgumentParser.parse_known_args")
 def test_main_calls_sys_exit_0_when_fail_on_missing_tests_is_false_and_exception_raised(
     mock_parse_known_args: MagicMock,
     mock_find_src_functions_not_in_tests: MagicMock,
@@ -59,3 +59,11 @@ def test_main_calls_sys_exit_0_when_fail_on_missing_tests_is_false_and_exception
     )
     main()
     mock_sys_exit.assert_called_once_with(0)
+
+
+@patch("missing_unittests.__init__.environ")
+def test_fail_on_missing_tests_when_env_var_is_set_to_true(
+    mock_environ: MagicMock,
+) -> None:
+    mock_environ.get.return_value = "true"
+    assert fail_on_missing_tests() is True

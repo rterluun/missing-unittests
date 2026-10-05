@@ -9,11 +9,10 @@ from missing_unittests.scan import (
     find_src_functions_not_in_tests,
 )
 
-FAIL_ON_MISSING_TESTS = environ.get("FAIL_ON_MISSING_TESTS", "False")
-
 
 def fail_on_missing_tests() -> bool:
-    return FAIL_ON_MISSING_TESTS.lower() in ("true", "1", "t", "y", "yes")
+    fail_on_missing_tests_env = environ.get("FAIL_ON_MISSING_TESTS", "False")
+    return fail_on_missing_tests_env.lower() in ("true", "1", "t", "y", "yes")
 
 
 def main() -> None:
