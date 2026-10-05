@@ -60,16 +60,20 @@ The default name for the configuration file is `.missing_unittests.yaml`, but yo
 
 | Key | Description |
 | --- | ----------- |
-| `exclusions` | A list of key value pairs where module is the module name and function is the function name to exclude from the check. |
+| `exclusions` | A list of key value pairs where module is the module name and functions is a list of function names to exclude from the check. |
 
 ### exclusions
 
 ```yaml
 exclusions:
   - module: missing_unittests.__init__
-    function: a
-  - module: missing_unittests.__init__
-    function: b
+    functions:
+      - a
+      - b
+  - module: missing_unittests.__main__
+    functions:
+      - a
+
 ```
 
 <!-- markdownlint-restore MD013-->
