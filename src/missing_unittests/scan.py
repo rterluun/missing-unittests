@@ -53,9 +53,9 @@ def _find_not_imported_functions_in_tests(
             ]
 
             if non_excluded_missing_functions:
-                all_missing_functions.extend(missing_functions)
+                all_missing_functions.extend(non_excluded_missing_functions)
                 raise MissingUnittestsError(
-                    f"The following functions are missing unit tests: {missing_functions}"
+                    f"The following functions are missing unit tests: {non_excluded_missing_functions}"
                 )
         except MissingUnittestsError as exc:
             print(exc)
