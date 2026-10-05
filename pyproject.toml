@@ -7,7 +7,9 @@ authors = [
     { name = "Robert ter Luun", email = "rterluun@ilionx.com" }
 ]
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "pydantic>=2.13.5",
+]
 
 [project.scripts]
 missing-unittests = "missing_unittests:main"

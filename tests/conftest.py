@@ -7,6 +7,8 @@ from typing import LiteralString
 
 import pytest
 
+from missing_unittests.config import MissingUnittestsConfig, MissingUnittestsYamlConfig
+
 MODULE_NAME = "tests.sample.functions"
 
 
@@ -76,4 +78,40 @@ def argparse_namespace() -> Namespace:
         src_folder="./src/",
         tests_folder="./tests/",
         fail_on_missing_tests=True,
+        config_file=Path(__file__).parent / "config" / "config.yaml",
     )
+
+
+def get_exclusions_list() -> list[tuple[str, str]]:
+    return [
+        ("missing_unittests.__init__", "a"),
+        ("missing_unittests.__init__", "b"),
+    ]
+
+
+@pytest.fixture
+def config_yaml() -> Path:
+    return Path(__file__).parent / "config" / "config.yaml"
+
+
+@pytest.fixture
+def missing_unittests_yaml_config() -> MissingUnittestsYamlConfig:
+    exclusions_list = get_exclusions_list()
+
+    return MissingUnittestsYamlConfig(
+        exclusions=[
+            {"module": module, "function": function}
+            for module, function in exclusions_list
+        ]
+    )
+
+
+@pytest.fixture
+def exclusions_list() -> list[tuple[str, str]]:
+    return get_exclusions_list()
+
+
+@pytest.fixture
+def missing_unittests_config() -> MissingUnittestsConfig:
+    exclusions_list = get_exclusions_list()
+    return MissingUnittestsConfig(exclusions=exclusions_list)
