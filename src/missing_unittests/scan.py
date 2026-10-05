@@ -130,7 +130,9 @@ def _get_modules_from_folder(
     modules: list[tuple[ModuleType, list[FunctionType]]] = []
 
     for root, _, files in walk(str(folder)):
-        module_files = [file for file in files if file.endswith(".py")]
+        module_files = [
+            file for file in files if file.endswith(".py") and file != "__init__.py"
+        ]
 
         module_names = [
             _convert_path_to_module_name(
